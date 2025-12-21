@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>DSA</title>
     <meta charset="utf-8">
@@ -144,6 +143,7 @@
         .token.italic {
             font-style: italic;
         }
+
         /* Global List View Container */
         #dsa-global-list-view {
             display: none;
@@ -177,15 +177,17 @@
         .dsa-list-no {
             font-family: monospace;
             color: var(--text-secondary);
-            width: 50px; /* Increased to fit 3 digits */
-            min-width: 50px; /* Prevent shrinking */
+            width: 50px;
+            /* Increased to fit 3 digits */
+            min-width: 50px;
+            /* Prevent shrinking */
             margin-right: 10px;
             font-weight: bold;
         }
 
         .dsa-list-item:hover {
             transform: translateY(-1px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         .dsa-list-item.completed {
@@ -201,10 +203,13 @@
         .dsa-list-left {
             display: flex;
             align-items: center;
-            gap: 15px; /* Use gap for consistent spacing */
+            gap: 15px;
+            /* Use gap for consistent spacing */
             flex: 1;
-            min-width: 0; /* Enable flex truncation */
-            margin-right: 15px; /* Spacing from badge */
+            min-width: 0;
+            /* Enable flex truncation */
+            margin-right: 15px;
+            /* Spacing from badge */
         }
 
         .dsa-problem-link {
@@ -215,6 +220,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .dsa-problem-link:hover {
             color: var(--accent-green);
         }
@@ -227,30 +233,58 @@
             border-radius: 99px;
             white-space: nowrap;
         }
-        .dsa-badge.Easy { background: #dcfce7; color: #166534; }
-        .dsa-badge.Medium { background: #fff7ed; color: #9a3412; }
-        .dsa-badge.Hard { background: #fef2f2; color: #991b1b; }
 
-        .dark-mode .dsa-badge.Easy { background: #064e3b; color: #a7f3d0; }
-        .dark-mode .dsa-badge.Medium { background: #431407; color: #fdba74; }
-        .dark-mode .dsa-badge.Hard { background: #450a0a; color: #fca5a5; }
+        .dsa-badge.Easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .dsa-badge.Medium {
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .dsa-badge.Hard {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .dark-mode .dsa-badge.Easy {
+            background: #064e3b;
+            color: #a7f3d0;
+        }
+
+        .dark-mode .dsa-badge.Medium {
+            background: #431407;
+            color: #fdba74;
+        }
+
+        .dark-mode .dsa-badge.Hard {
+            background: #450a0a;
+            color: #fca5a5;
+        }
 
         /* Sort Controls */
         .dsa-sort-controls {
             display: flex;
-            justify-content: center; /* Center the button */
+            justify-content: center;
+            /* Center the button */
             padding: 10px 0;
             position: sticky;
-            top: 60px; /* Adjust based on dashboard height */
+            top: 60px;
+            /* Adjust based on dashboard height */
             z-index: 900;
-            background: var(--bg-primary); /* Ensure background covers content */
+            background: var(--bg-primary);
+            /* Ensure background covers content */
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 15px;
         }
+
         .dsa-sort-label {
             color: var(--text-secondary);
             font-size: 0.9em;
         }
+
         .dsa-sort-btn {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -260,7 +294,11 @@
             cursor: pointer;
             font-size: 0.9em;
         }
-        .dsa-sort-btn:hover { background: var(--hover-bg); }
+
+        .dsa-sort-btn:hover {
+            background: var(--hover-bg);
+        }
+
         .dsa-sort-btn.active {
             background: var(--accent-green);
             color: white;
@@ -269,9 +307,20 @@
 
         /* Highlight Animation */
         @keyframes dsa-flash {
-            0% { background-color: var(--accent-green); color: white; }
-            40% { background-color: var(--accent-green); color: white; }
-            100% { background-color: transparent; color: inherit; }
+            0% {
+                background-color: var(--accent-green);
+                color: white;
+            }
+
+            40% {
+                background-color: var(--accent-green);
+                color: white;
+            }
+
+            100% {
+                background-color: transparent;
+                color: inherit;
+            }
         }
 
         .dsa-highlight-item {
@@ -736,10 +785,13 @@
             overflow: initial;
             box-sizing: border-box;
             word-wrap: break-word;
-            padding-top: 100px; /* Clear floating dashboard */
-            -webkit-font-smoothing: antialiased; /* Crisp text */
+            padding-top: 100px;
+            /* Clear floating dashboard */
+            -webkit-font-smoothing: antialiased;
+            /* Crisp text */
             -moz-osx-font-smoothing: grayscale;
         }
+
         /* Dashboard - Glassmorphism & Floating */
         .dsa-tracker-dashboard {
             position: fixed;
@@ -763,7 +815,8 @@
         }
 
         .dark-mode .dsa-tracker-dashboard {
-            background: rgba(30, 41, 59, 0.85); /* Dark slate with opacity */
+            background: rgba(30, 41, 59, 0.85);
+            /* Dark slate with opacity */
             border-color: rgba(255, 255, 255, 0.1);
         }
 
@@ -773,7 +826,8 @@
             justify-content: center;
             padding: 15px 0;
             position: sticky;
-            top: 80px; /* Adjusted for floating dashboard */
+            top: 80px;
+            /* Adjusted for floating dashboard */
             z-index: 900;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(8px);
@@ -787,7 +841,8 @@
         }
 
         /* Buttons (Premium Feel) */
-        .dsa-btn, .dsa-sort-btn {
+        .dsa-btn,
+        .dsa-sort-btn {
             padding: 8px 16px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -800,13 +855,15 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .dsa-btn:hover, .dsa-sort-btn:hover {
+        .dsa-btn:hover,
+        .dsa-sort-btn:hover {
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
             background: var(--hover-bg);
         }
 
-        .dsa-btn:active, .dsa-sort-btn:active {
+        .dsa-btn:active,
+        .dsa-sort-btn:active {
             transform: translateY(0);
         }
 
@@ -837,6 +894,7 @@
             border-radius: 20px;
             letter-spacing: 0.02em;
         }
+
         .dsa-dashboard-content {
             max-width: 900px;
             width: 100%;
@@ -1478,7 +1536,7 @@
 
     <div class="crossnote markdown-preview  ">
 
-        <h1 id="-dsa-interview-cracker-neetcode--leetcode-150">🎯 DSA INTERVIEW CRACKER: NEETCODE / LEETCODE 150 </h1>
+        <h1 id="-dsa-interview-cracker-based upon--leetcode-150">🎯 DSA INTERVIEW CRACKER: BASED ON LEETCODE 150 </h1>
         <p>A structured roadmap to master Data Structures &amp; Algorithms for interviews. Each section covers when to
             use, intuition, core templates, common pitfalls, and must-know problems.</p>
         <hr>
