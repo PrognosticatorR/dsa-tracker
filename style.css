@@ -347,8 +347,8 @@ color: #fff;
 pre[class*="language-"] {
 margin: 0 !important;
 padding: 24px !important;
-background: #1e1e1e !important;
-/* One Dark background */
+background: #282a36 !important;
+    /* Dracula background */
 font-family: 'JetBrains Mono', monospace !important;
 font-size: 0.95rem !important;
 border: none !important;
@@ -358,61 +358,89 @@ line-height: 1.6 !important;
 color: #d4d4d4 !important;
 text-shadow: none !important;
 }
-/* Syntax Highlighting Overrides for Higher Contrast */
-token.comment,
-token.prolog,
-token.doctype,
-token.cdata {
-color: #6a9955 !important;
+/* --- DRACULA THEME SYNTAX HIGHLIGHTING --- */
+/* Background is handled in pre[class*="language-"] */
+
+/* Comments */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #6272a4 !important;
+    font-style: italic;
 }
-token.punctuation {
-color: #cccccc !important;
+/* Punctuation */
+.token.punctuation {
+    color: #f8f8f2 !important;
 }
-token.property,
-token.tag,
-token.constant,
-token.symbol,
-token.deleted {
-color: #ff7b72 !important;
-/* Red/Pink */
+/* Constants & Deleted */
+.token.constant,
+.token.deleted {
+    color: #bd93f9 !important;
+    /* Purple */
 }
-token.boolean,
-token.number {
-color: #b5cea8 !important;
-/* Greenish */
+/* Keywords, Tags, Changed */
+.token.keyword,
+.token.tag,
+.token.selector,
+.token.changed {
+    color: #ff79c6 !important;
+    /* Pink */
 }
-token.selector,
-token.attr-name,
-token.string,
-token.char,
-token.builtin,
-token.inserted {
-color: #ce9178 !important;
-/* Orange/Brown */
+/* Strings, Char, Attributes */
+.token.string,
+.token.char,
+.token.attr-value,
+.token.regex,
+.token.variable {
+    color: #f1fa8c !important;
+    /* Yellow */
 }
-token.operator,
-token.entity,
-token.url,
+
+/* Functions, Class Names */
+.token.function,
+.token.class-name,
+.token.attr-name {
+    color: #50fa7b !important;
+    /* Green */
+}
+
+/* Numbers, Booleans, Built-in, Symbols */
+.token.number,
+.token.boolean,
+.token.builtin,
+.token.symbol,
+.token.inserted {
+    color: #bd93f9 !important;
+    /* Purple */
+}
+/* Operators, Entities, URLs */
+.token.operator,
+.token.entity,
+.token.url,
 .language-css .token.string,
 .style .token.string {
-color: #d4d4d4 !important;
+    color: #ff79c6 !important;
+        /* Pink */
 }
-token.atrule,
-token.attr-value,
-token.keyword {
-color: #569cd6 !important;
-/* Blue */
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #ff79c6 !important;
+    /* Pink */
 }
-token.function,
-token.class-name {
-color: #dcdcaa !important;
-/* Yellow */
+.token.regex,
+.token.important {
+    color: #ffb86c !important;
+    /* Orange */
 }
-token.regex,
-token.important,
-token.variable {
-color: #9cdcfe !important;
-/* Light Blue */
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
 }
 /* Hide toggle details */
 pre.collapsed {
@@ -457,6 +485,26 @@ box-shadow: var(--shadow-sm);
 .dsa-sort-btn strong {
 color: var(--color-primary);
 }
+/* Inline code styling to match Dracula */
+:not(pre)>code {
+    background-color: rgba(98, 114, 164, 0.3) !important;
+    /* Dracula Comment color with opacity */
+    color: #f8f8f2 !important;
+    /* Dracula Foreground */
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* Ensure Common Traps paragraphs don't override this inadvertently */
+h3[id*="common-traps"]+p code,
+h3[id*="traps"]+p code {
+    background-color: rgba(255, 121, 198, 0.2) !important;
+    /* Dracula Pink low opacity */
+    color: #ff79c6 !important;
+    /* Dracula Pink */
+}
 /* --- COMMON TRAPS Styling --- */
 h3[id*="common-traps"],
 h3[id*="traps"] {
@@ -470,20 +518,24 @@ margin-top: 2.5rem;
 color: var(--color-danger);
 font-size: 1.1rem;
 }
-/* Style the paragraph immediately following Common Traps */
+/* Style the paragraph OR list immediately following Common Traps */
 h3[id*="common-traps"]+p,
-h3[id*="traps"]+p {
-background: rgba(239, 68, 68, 0.05);
-/* Very light red */
-border-left: 3px solid var(--color-danger);
-padding: 12px 16px;
-border-radius: 0 8px 8px 0;
-margin-top: 0.5rem;
-color: var(--text-main);
+h3[id*="traps"]+p,
+h3[id*="common-traps"]+ul,
+h3[id*="traps"]+ul {
+    background: rgba(239, 68, 68, 0.05);
+    /* Very light red */
+    border-left: 3px solid var(--color-danger);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin-top: 0.5rem;
+    color: var(--text-main);
 }
 .dark-mode h3[id*="common-traps"]+p,
-.dark-mode h3[id*="traps"]+p {
-background: rgba(239, 68, 68, 0.1);
+.dark-mode h3[id*="traps"]+p,
+.dark-mode h3[id*="common-traps"]+ul,
+.dark-mode h3[id*="traps"]+ul {
+    background: rgba(239, 68, 68, 0.1);
 }
 /* --- 3. PROBLEM LIST (Interactive) --- */
 /* Target OLs inside sections correctly */

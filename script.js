@@ -272,6 +272,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // Re-run Prism highlight after DOM modifications
+    if (window.Prism) {
+        window.Prism.highlightAll();
+    }
+
     // 3. Identify and Inject Checkboxes
     const BLIND75_TITLES = [
         "two sum", "best time to buy and sell stock", "contains duplicate", "product of array except self", "maximum subarray", "maximum product subarray", "find minimum in rotated sorted array", "search in rotated sorted array", "3sum", "container with most water",
@@ -423,8 +428,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             // Toggle Logic
-            // Use inner container to prevent progress bar clicks from triggering
-            h2.querySelector('.dsa-header-inner').addEventListener('click', (e) => {
+            // Use H2 to capture clicks anywhere on the header (except strictly interactive children if needed)
+            h2.addEventListener('click', (e) => {
+            // Prevent toggle if clicking specifically on the progress bar if desired,
+            // but user asked for "click anywhere", so we allow it.
                 h2.classList.toggle('dsa-collapsed');
                 wrapper.style.display = h2.classList.contains('dsa-collapsed') ? 'none' : 'block';
             });
