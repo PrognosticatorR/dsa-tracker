@@ -1,3 +1,7 @@
+/**
+ * DSA Patterns Tracker script
+ * Author: Devesh Rawat <devsrawt@gmail.com>
+ */
 document.addEventListener("DOMContentLoaded", function () {
     const STORAGE_KEY = 'dsa-tracker-progress';
     let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -157,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <button id="dsa-theme-btn" class="dsa-btn" title="Toggle Theme">🌓</button>
                     <button id="dsa-list-btn" class="dsa-btn" title="View List">📋</button>
                     <button id="dsa-random-btn" class="dsa-btn" title="Random Problem">🎲</button>
+                    <button id="dsa-patterns-btn" class="dsa-btn" title="View Patterns" onclick="window.open('patterns.html', '_blank')">📖</button>
                     <div class="dsa-select-wrapper" style="margin:0;">
                         <select class="dsa-btn" onchange="window.handleSettings(this.value)" style="width: auto;">
                             <option value="" disabled selected>⚙️</option>
@@ -204,15 +209,67 @@ document.addEventListener("DOMContentLoaded", function () {
     const progressText = document.getElementById('dsa-progress-text');
     const progressFill = document.getElementById('dsa-progress-fill');
 
-    // 3a. Copy Code Logic
-    document.querySelectorAll('pre').forEach(pre => {
-        const btn = document.createElement('button');
-        btn.className = 'dsa-copy-btn';
-        btn.textContent = 'Copy';
-        btn.onclick = () => {
+    // 3a. Enhanced Code Blocks (Copy, Toggle, Line Numbers)
+    document.querySelectorAll('pre').forEach((pre, index) => {
+        // Wrapper for header + code
+        const wrapper = document.createElement('div');
+        wrapper.className = 'dsa-code-wrapper';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'dsa-code-header';
+
+        const leftGroup = document.createElement('div');
+        leftGroup.style.display = 'flex';
+        leftGroup.style.alignItems = 'center';
+        leftGroup.style.gap = '10px';
+
+        const toggleBtn = document.createElement('span');
+        toggleBtn.className = 'dsa-code-toggle';
+        toggleBtn.textContent = '▼';
+        toggleBtn.title = 'Toggle Code';
+
+        const langLabel = document.createElement('span');
+        langLabel.className = 'dsa-code-lang';
+        // Try to infer language from code class
+        const codeClass = pre.querySelector('code')?.className || '';
+        const langMatch = codeClass.match(/language-(\w+)/);
+        langLabel.textContent = langMatch ? langMatch[1].toUpperCase() + ' TEMPLATE' : 'CODE TEMPLATE';
+
+        leftGroup.append(toggleBtn, langLabel);
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'dsa-copy-btn';
+        copyBtn.textContent = 'Copy';
+        copyBtn.onclick = (e) => {
+            e.stopPropagation();
             navigator.clipboard.writeText(pre.innerText).then(() => window.showToast('Copied!', '📋'));
         };
-        pre.style.position = 'relative'; pre.appendChild(btn);
+
+        header.append(leftGroup, copyBtn);
+
+        // Insert wrapper
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(header);
+        wrapper.appendChild(pre);
+
+        // Line Numbers Logic
+        pre.classList.add('line-numbers');
+        const lines = pre.innerText.split('\n').length;
+        const lineNumbersWrapper = document.createElement('span');
+        lineNumbersWrapper.className = 'line-numbers-rows';
+        lineNumbersWrapper.innerHTML = new Array(lines).fill('<span></span>').join('');
+        pre.appendChild(lineNumbersWrapper);
+
+        // Toggle Logic
+        // Default to collapsed
+        pre.classList.add('collapsed');
+        toggleBtn.style.transform = 'rotate(-90deg)';
+
+        header.addEventListener('click', () => {
+            pre.classList.toggle('collapsed');
+            toggleBtn.style.transform = pre.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
+        });
     });
 
     // 3. Identify and Inject Checkboxes
@@ -230,21 +287,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const problemListItems = [];
     document.querySelectorAll('h4').forEach(h4 => {
-        const difficulty = h4.textContent.trim();
-        if (['Easy', 'Medium', 'Hard'].some(d => difficulty.includes(d))) {
-            let nextElem = h4.nextElementSibling;
-            while (nextElem && nextElem.tagName !== 'UL' && nextElem.tagName !== 'H4') nextElem = nextElem.nextElementSibling;
+        const difficultyText = h4.textContent.trim();
+        const detectedDiff = ['Easy', 'Medium', 'Hard'].find(d => difficultyText.includes(d));
 
-            if (nextElem && nextElem.tagName === 'UL') {
+        if (detectedDiff) {
+            let nextElem = h4.nextElementSibling;
+            while (nextElem && nextElem.tagName !== 'UL' && nextElem.tagName !== 'OL' && nextElem.tagName !== 'H4') nextElem = nextElem.nextElementSibling;
+
+            if (nextElem && (nextElem.tagName === 'UL' || nextElem.tagName === 'OL')) {
                 nextElem.classList.add('dsa-problem-list');
                 nextElem.querySelectorAll('li').forEach(li => {
                     const link = li.querySelector('a');
                     if (link) {
                         totalProblems++;
-                        const id = btoa(link.textContent.trim() + link.getAttribute('href')).replace(/[^a-zA-Z0-9]/g, '');
+                        // Fix: Encode unicode (emojis) safely to prevent btoa crash
+                        const safeText = encodeURIComponent(link.textContent.trim() + link.getAttribute('href'));
+                        const id = btoa(safeText).replace(/[^a-zA-Z0-9]/g, '');
                         problemListItems.push({ li, id, link });
 
-                        li.setAttribute('data-diff', difficulty.replace(/\s+/g, ' ').trim());
+                        li.setAttribute('data-diff', detectedDiff);
                         li.setAttribute('data-problem-id', id);
 
                         const titleLower = link.textContent.trim().toLowerCase();
@@ -304,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Collect siblings
         let next = h2.nextSibling;
         const elementsToMove = [];
-        while (next && next.tagName !== 'H2') {
+        while (next && next.tagName !== 'H2' && next.tagName !== 'H1') {
             elementsToMove.push(next);
             next = next.nextSibling;
         }
@@ -396,8 +457,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const globalListContainer = document.createElement('div');
     globalListContainer.id = 'dsa-global-list-view';
     document.body.appendChild(globalListContainer);
-
-
 
     let currentSort = 'default', currentFilter = 'all';
     window.setFilter = (val) => { currentFilter = val; renderGlobalList(); };
@@ -497,45 +556,161 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Init View
+    const isPatternsPage = window.location.pathname.includes('patterns.html');
     const savedMode = localStorage.getItem('dsa-view-mode') || 'full';
-    if (savedMode === 'list') toggleView(true);
+
+    if (isPatternsPage) {
+        // Always start patterns page in full reading mode unless overridden
+        toggleView(false);
+    } else if (savedMode === 'list') {
+        toggleView(true);
+    }
 
     // Make switching available for random button
     window.switchView = (mode) => {
         if (mode === 'full') toggleView(false);
     };
 
-    // Random Button
-    document.getElementById('dsa-random-btn').addEventListener('click', () => {
-        const unsolved = problemListItems.filter(item => !getState(item.id).done);
-        if (unsolved.length === 0) return window.showToast('All solved!', '🎉');
-        const randomItem = unsolved[Math.floor(Math.random() * unsolved.length)];
+    // --- 5. Sticky Sidebar TOC & Scroll Spy ---
+    const tocContainer = document.createElement('aside');
+    tocContainer.className = 'dsa-sidebar-toc';
+    // Only show on desktop for now, or use media queries in CSS
+    document.body.appendChild(tocContainer);
 
-        // Always switch to full view to jump to problem
-        if (document.body.classList.contains('view-mode-list')) {
-            window.switchView('full');
+    const generateTOC = () => {
+        const headers = document.querySelectorAll('h1, h2');
+        let tocHTML = '<nav class="dsa-toc-nav"><ul>';
+
+        headers.forEach((header, index) => {
+            if (header.tagName === 'H1') return; // Skip title in TOC
+            const id = header.id || `section-${index}`;
+            header.id = id;
+
+            // Clean text: remove badges/icons for clean TOC
+            const clone = header.cloneNode(true);
+            clone.querySelectorAll('.dsa-mini-badge, .dsa-header-icon, .dsa-section-progress').forEach(e => e.remove());
+            const text = clone.textContent.trim();
+
+            tocHTML += `<li><a href="#${id}" class="dsa-toc-link" data-target="${id}">${text}</a></li>`;
+        });
+
+        tocHTML += '</ul></nav>';
+        tocContainer.innerHTML = tocHTML;
+
+        // Add Click Listeners for "Focus Mode" (Open Target, Close Others)
+        tocContainer.querySelectorAll('.dsa-toc-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('data-target');
+                const targetHeader = document.getElementById(targetId);
+
+                if (targetHeader) {
+                    // 1. Collapse All Sections
+                    document.querySelectorAll('.dsa-section-header').forEach(header => {
+                        header.classList.add('dsa-collapsed');
+                        const content = header.nextElementSibling;
+                        if (content && content.classList.contains('dsa-section-content')) {
+                            content.style.display = 'none';
+                        }
+                    });
+
+                    // 2. Expand Target Section
+                    targetHeader.classList.remove('dsa-collapsed');
+                    const targetContent = targetHeader.nextElementSibling;
+                    if (targetContent && targetContent.classList.contains('dsa-section-content')) {
+                        targetContent.style.display = 'block';
+                    }
+
+                    // 3. Scroll to it
+                    setTimeout(() => {
+                        targetHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // Flash highlight
+                        targetHeader.classList.remove('dsa-flash-highlight');
+                        void targetHeader.offsetWidth;
+                        targetHeader.classList.add('dsa-flash-highlight');
+                    }, 50);
+                }
+            });
+        });
+    };
+
+    // Inject CSS for Sidebar (Dynamic injection to keep logic self-contained or add to style.css)
+    // MOVED TO STYLE.CSS for better maintainability
+
+    generateTOC();
+
+    // Scroll Spy
+    const tocLinks = document.querySelectorAll('.dsa-toc-link');
+    const sections = document.querySelectorAll('h2'); // Tracking H2s as sections
+
+    const onScroll = () => {
+        let current = '';
+        const offset = 200; // Increased offset to trigger highlight slightly earlier than top of screen
+
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+            // At bottom of page, highlight the last item
+            if (sections.length > 0) current = sections[sections.length - 1].getAttribute('id');
+        } else if (window.scrollY < 150) {
+            // At top of page, highlight the first item (Learning Progression)
+            if (sections.length > 0) current = sections[0].id; // Usually the first H2
+        } else {
+            sections.forEach(section => {
+                if (section.offsetParent === null) return; // Ignore hidden sections
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - offset) {
+                    current = section.getAttribute('id');
+                }
+            });
         }
 
-        setTimeout(() => {
-        // Ensure the section is expanded if it's collapsed
-            const section = randomItem.li.closest('.dsa-section-content');
-            if (section) {
-                section.style.display = 'block';
-                section.previousElementSibling.classList.remove('dsa-collapsed');
+        tocLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-target') === current) {
+                link.classList.add('active');
             }
+        });
+    };
 
-            // Scroll after expansion ensures it's visible
-            setTimeout(() => {
-                randomItem.link.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // Highlight effect
-                randomItem.li.style.transition = 'background 0.5s';
-                randomItem.li.style.backgroundColor = 'rgba(16, 185, 129, 0.3)';
-                setTimeout(() => randomItem.li.style.backgroundColor = '', 1500);
-            }, 50);
-
-            window.showToast(`Random Pick: ${randomItem.link.textContent}`, '🎲');
-        }, 100);
-    });
+    window.addEventListener('scroll', onScroll);
 
     updateDashboard();
+
+    // Random Button Logic Update (inside DOMContentLoaded)
+    const randomBtn = document.getElementById('dsa-random-btn');
+    if (randomBtn) { // Safety check if element exists
+        // Remove old listener to avoid duplicates if any (though DOMContentLoaded runs once)
+        const newRandomBtn = randomBtn.cloneNode(true);
+        randomBtn.parentNode.replaceChild(newRandomBtn, randomBtn);
+
+        newRandomBtn.addEventListener('click', () => {
+            const unsolved = problemListItems.filter(item => !getState(item.id).done);
+            if (unsolved.length === 0) return window.showToast('All solved!', '🎉');
+            const randomItem = unsolved[Math.floor(Math.random() * unsolved.length)];
+
+            // Always switch to full view to jump to problem
+            if (document.body.classList.contains('view-mode-list')) {
+                window.switchView('full');
+            }
+
+            setTimeout(() => {
+                // Ensure the section is expanded if it's collapsed
+                const section = randomItem.li.closest('.dsa-section-content');
+                if (section) {
+                    section.style.display = 'block';
+                    section.previousElementSibling.classList.remove('dsa-collapsed');
+                }
+
+                // Scroll after expansion ensures it's visible
+                setTimeout(() => {
+                    randomItem.link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Highlight effect using CSS class
+                    randomItem.li.classList.remove('dsa-flash-highlight'); // Reset
+                    void randomItem.li.offsetWidth; // Trigger reflow
+                    randomItem.li.classList.add('dsa-flash-highlight');
+                }, 50);
+
+                window.showToast(`Random Pick: ${randomItem.link.textContent}`, '🎲');
+            }, 100);
+        });
+    }
 });
